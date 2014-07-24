@@ -1,0 +1,72 @@
+<?php
+session_start();
+include("donneesql.php");
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<HTML>
+<HEAD>
+	<TITLE>Redevance speciale</TITLE>
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	
+</HEAD>
+<BODY bgcolor='lightblue' >
+
+	<div class="entete" >
+		<?php
+			include('entete.php');   
+		?>
+	</div>
+	
+	<div class="colonneGauche" >
+		<?php
+			include('menu.php');  
+		?>
+	</div>
+	
+	<div class="colonneDroite">
+		<?php
+			// Tableau referencant les pages existantes
+			$pageOK = array	('clients' => 'clients.php',
+							'accueil' => 'accueil.php',
+							'recherche' => 'recherche.php',
+							'nouvcl' => 'newcl.php',
+							"devis" => "devis.php",
+							'historique' => 'historique.php',
+							'an' => 'annee.php',
+							'pu' => 'prixu.php');
+			// On teste que le paramètre d'url existe et qu'il est bien autorisé
+			if ($_SESSION['Util'])
+			{
+				if((isset($_GET['page'])) && (isset($pageOK[$_GET['page']]))) 
+				{	include($pageOK[$_GET['page']]); } 
+				else 
+				{    
+					if($_GET['page']=="deconnexion")
+					{ 
+						session_destroy();
+						header("location:index.php");
+					}
+					else
+					{ include("recherche.php");}// Page par défaut quant elle n'existe pas dans le tableau
+				}
+			}
+			else
+			{
+				// Identification si pas connecté (verification par la variable globale session)
+				include('auth.php');
+			}
+		?>
+	</div> 
+	<?php
+		mysql_close($idco);
+	?>
+	<SCRIPT src="jquery-1.11.1.js"></SCRIPT>
+	<!-- Conversion du tableau ds prix afin de pouvoir l'utiliser en javascript -->
+	<script type="text/javascript" >
+		var prix = <?php echo json_encode($Priu); ?>;
+	</script>
+	<!-- Scripts utilisés par les pages php-->
+	<SCRIPT src="script.js"> </SCRIPT>
+</BODY>
+</HTML>
